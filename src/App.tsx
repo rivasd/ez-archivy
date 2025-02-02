@@ -5,6 +5,10 @@ import './App.css'
 
 function App() {
 
+  const alarm = ()=>{
+    alert("alarm!!!")
+  }
+
   return (
     <>
       <header>
@@ -20,7 +24,7 @@ function App() {
           <Col>
             <Container>
               <Status></Status>
-              <Login></Login>
+              <Login onAlarm={alarm} onAccess={()=>{}}></Login>
             </Container>
           </Col>
           <Col id='right-pad'></Col>

@@ -15,6 +15,8 @@ type Traitres = Record<string, Traitre>
 export interface ArchivyState {
   status: Status
   maxFailures: number
+  alarmLengthSeconds: number
+  corruptionTimeSeconds: number
   traitres: Traitres
 }
 

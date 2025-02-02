@@ -21,5 +21,35 @@
     --main-bg: #010205;
     --color-jedi-blue: #0123A2;
     --color-empire-blue: #4ca4f7;
+    --color-dark-blue: #173d91;
+    --color-light-gray: #cabda6;
+    --bs-body-bg:var(--main-bg);
+    --bs-border-color:var(--color-empire-blue);
+    --bs-border-width: 2px;
+    --bs-body-color:var(--color-empire-blue);
 } 
 
+.btn-outline-primary {
+    --bs-btn-color:var(--color-empire-blue);
+    --bs-btn-border-color:var(--color-empire-blue);
+    --bs-btn-hover-color: #70b4f3;;
+    --bs-btn-active-bg: var(--color-empire-blue);
+    --bs-btn-hover-border-color: var(--color-empire-blue);
+    --bs-btn-active-color: var(--color-jedi-blue);
+    --bs-btn-hover-bg:#4ca4f791;
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: var(--color-light-gray);
+    --bs-btn-border-color: #cabda68c;
+    --bs-btn-hover-color: #b4c2cf;
+    --bs-btn-hover-border-color: #b4c2cf;
+    --bs-btn-hover-bg:#a1bad1a6;
+    --bs-btn-active-bg: #cddae6;
+    --bs-btn-active-color: grey;
+    border-width: 2px;
+}
+
+.btn-sm {
+    --bs-btn-font-size: 0.675rem
+}

@@ -30,3 +30,7 @@
 #header-contents {
   text-align: center;
 }
+
+button {
+  margin: 6px;
+}
