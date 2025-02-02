@@ -1,0 +1,25 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+@font-face {
+    font-family: Baumans;
+    src: url('./Baumans-Regular.ttf');
+}
+
+@font-face {
+    font-family: "AurekBesh";
+    font-style: normal;
+    font-display: swap;
+    src: url('./AB-Equinox.otf');
+}
+
+@font-face {
+    font-family: Almost-There;
+    src: url('./AlmostThere-Numeric.otf');
+}
+
+:root {
+    --main-bg: #010205;
+    --color-jedi-blue: #0123A2;
+    --color-empire-blue: #4ca4f7;
+} 
+

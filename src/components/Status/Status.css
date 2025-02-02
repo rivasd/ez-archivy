@@ -1,0 +1,18 @@
+@import '../../assets/styles.css';
+
+#archive-progress {
+  --bs-progress-height: 50px !important;
+  --bs-progress-bg: none;
+  --bs-progress-border-radius: 3px;
+  --bs-progress-bar-bg: var(--color-empire-blue);
+  --bs-progress-bar-color: rgb(23, 61, 145);
+  border: 3px solid var(--color-empire-blue);
+  box-shadow: 0px 0px 20px 5px var(--color-empire-blue);
+  font-family: Almost-There;
+  font-size: 25px;
+  font-weight: 800;
+}
+
+.counter {
+  font-family: Almost-There;
+}
