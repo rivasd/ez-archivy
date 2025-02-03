@@ -1,13 +1,29 @@
-import { Row, Col, Container} from 'react-bootstrap'
+import { Row, Col, Container } from 'react-bootstrap'
 import Login from './components/Login/Login'
 import Status from './components/Status/Status'
 import './App.css'
+import { useEffect } from 'react'
+import { ArchivyState } from './state/models'
+import useArchivyStore from './state/store'
 
 function App() {
 
-  const alarm = ()=>{
+  const setwholeState = useArchivyStore((state) => state.setWholeState)
+
+  const alarm = () => {
     alert("alarm!!!")
   }
+
+  useEffect(() => {
+    (async () => {
+      if (window.ipcRenderer) {
+        const storeState = await window.ipcRenderer.invoke('load-state')
+        if (storeState) {
+          setwholeState(storeState)
+        }
+      }
+    })()
+  }, [])
 
   return (
     <>
@@ -24,7 +40,7 @@ function App() {
           <Col>
             <Container>
               <Status></Status>
-              <Login onAlarm={alarm} onAccess={()=>{}}></Login>
+              <Login onAlarm={alarm} onAccess={() => { }}></Login>
             </Container>
           </Col>
           <Col id='right-pad'></Col>

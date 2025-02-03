@@ -18,6 +18,7 @@ export interface ArchivyState {
   alarmLengthSeconds: number
   corruptionTimeSeconds: number
   traitres: Traitres
+  setWholeState: (newState: ArchivyState) => void
 }
 
 
