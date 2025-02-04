@@ -30,7 +30,6 @@ let win: BrowserWindow | null
 
 function createWindow() {
 
-  ipcMain.on('load-state', handleConfigRead)
   win = new BrowserWindow({
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     width: 1920,
@@ -53,9 +52,9 @@ function createWindow() {
   }
 }
 
-const template = [];
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+// const template = [];
+// const menu = Menu.buildFromTemplate(template)
+// Menu.setApplicationMenu(menu)
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -75,4 +74,7 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(()=>{
+  ipcMain.handle('load-state', handleConfigRead)
+  createWindow()
+})

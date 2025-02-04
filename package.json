@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "author": "Daniel Rivas",
+  "description": "Un système de trollage de jeunes FACILE à utiliser",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
@@ -12,10 +13,13 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "date-fns": "^4.1.0",
     "electron-store": "^10.0.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.54.2",
+    "react-hotkeys-hook": "^4.6.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

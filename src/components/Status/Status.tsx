@@ -5,14 +5,15 @@ import './Status.css'
 
 const Status = () => {
 
-  const completionStatus = useArchivyStore((state)=>state.status)
+  const startDate = useArchivyStore((state)=>state.startDate)
+  const endDate = useArchivyStore((state)=>state.endDate)
   const maxTraitres = useArchivyStore((state)=>state.maxFailures)
   const traitres = useArchivyStore((state)=>state.traitres)
   const [currTime, setCurrTime] = useState<Date>(new Date)
   
   // costly compute, move outside rendering loop
-  const trahisons = Object.entries(traitres).filter((key)=>key[1].trahisonTime).map(([_, traitre])=>traitre).sort((a, b)=> a.trahisonTime!.getTime() + b.trahisonTime!.getTime());
-  const progressPercent = (currTime.getTime() - completionStatus.startDate.getTime()) / (completionStatus.endDate.getTime() - completionStatus.startDate.getTime()) * 100
+  const trahisons = traitres ? traitres.filter((traitre)=>traitre.trahisonTime).sort((a, b)=> a.trahisonTime!.getTime() + b.trahisonTime!.getTime()) : []
+  const progressPercent = (currTime.getTime() - startDate.getTime()) / (endDate.getTime() - startDate.getTime()) * 100
 
   useEffect(()=>{
     const interval = setInterval(()=>setCurrTime(new Date()), 1000)

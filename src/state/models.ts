@@ -1,24 +1,24 @@
 
-interface Status {
-  endDate: Date
-  startDate: Date
-}
-
-interface Traitre {
+export interface Traitre {
   username: string
   password: string
   trahisonTime?: Date
 }
 
-type Traitres = Record<string, Traitre>
+export interface ArchivyActions {
+  setWholeState: (newState: ArchivyState) => void
+  setTrahison: (traitre: string) => void
+}
 
 export interface ArchivyState {
-  status: Status
+  endDate: Date
+  startDate: Date
   maxFailures: number
+  maxLoginAttempts: number
+  LoginAttemptsCooldownSeconds: number
   alarmLengthSeconds: number
   corruptionTimeSeconds: number
-  traitres: Traitres
-  setWholeState: (newState: ArchivyState) => void
+  traitres: Traitre[]
 }
 
 

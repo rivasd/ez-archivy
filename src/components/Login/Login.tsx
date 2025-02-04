@@ -11,6 +11,8 @@ interface LoginProps {
 const Login = ({onAlarm}: LoginProps) => {
 
   const traitres = useArchivyStore((state => state.traitres))
+  const maxAttempts = useArchivyStore((state)=>state.maxLoginAttempts)
+  const loginCooldown = useArchivyStore((state)=>state.LoginAttemptsCooldownSeconds)
 
   const checkAcess = (evt: FormEvent) => {
     evt.stopPropagation();

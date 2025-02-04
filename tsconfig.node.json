@@ -6,7 +6,9 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "noUnusedLocals": false,
-    "strict": true
+    "strict": true,
+    "sourceMap": true,
+    "noEmit": false
   },
   "include": ["vite.config.ts", "electron"]
 }

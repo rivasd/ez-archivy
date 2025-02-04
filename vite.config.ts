@@ -11,6 +11,23 @@ export default defineConfig({
       main: {
         // Shortcut of `build.lib.entry`.
         entry: 'electron/main.ts',
+        vite:{
+          build:{
+            sourcemap: true,
+            rollupOptions:{
+              input: 'electron/main.ts'
+            }
+          }
+        },
+        onstart({startup}){
+          startup([
+            '.',
+            '--no-sandbox',
+            '--sourcemap',
+            // For Chrome devtools
+            '--remote-debugging-port=9229',
+          ])
+        }
       },
       preload: {
         // Shortcut of `build.rollupOptions.input`.

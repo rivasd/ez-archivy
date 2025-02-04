@@ -1,29 +1,32 @@
 import { Row, Col, Container } from 'react-bootstrap'
 import Login from './components/Login/Login'
 import Status from './components/Status/Status'
+import ConfigPanel from './components/ConfigPanel/ConfigPanel'
 import './App.css'
-import { useEffect } from 'react'
-import { ArchivyState } from './state/models'
 import useArchivyStore from './state/store'
+import { useEffect, useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
+import { initialState } from './state/store'
+
 
 function App() {
 
   const setwholeState = useArchivyStore((state) => state.setWholeState)
+  const [config, setConfig] = useState(false)
+
+  const handleClose = ()=>setConfig(false)
 
   const alarm = () => {
     alert("alarm!!!")
   }
 
-  useEffect(() => {
-    (async () => {
-      if (window.ipcRenderer) {
-        const storeState = await window.ipcRenderer.invoke('load-state')
-        if (storeState) {
-          setwholeState(storeState)
-        }
-      }
-    })()
-  }, [])
+  useEffect(()=>{
+    if(!localStorage.getItem('archivy-state')){
+      setwholeState(initialState)
+    }
+  }, [setwholeState])
+
+  useHotkeys('ctrl+3+4', ()=>setConfig(true))
 
   return (
     <>
@@ -45,6 +48,11 @@ function App() {
           </Col>
           <Col id='right-pad'></Col>
         </Row>
+
+        <ConfigPanel
+        show={config}
+        onHide={handleClose}
+        />
       </main>
       <footer>
         <Container id='footer-contents'>
