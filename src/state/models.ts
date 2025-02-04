@@ -17,7 +17,7 @@ export interface ArchivyState {
   maxLoginAttempts: number
   LoginAttemptsCooldownSeconds: number
   alarmLengthSeconds: number
-  corruptionTimeSeconds: number
+  corruptionTimeLimitSeconds: number
   traitres: Traitre[]
 }
 

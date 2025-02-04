@@ -20,7 +20,7 @@ export const initialState: ArchivyState = {
     }
   ],
   alarmLengthSeconds: 120,
-  corruptionTimeSeconds: 30
+  corruptionTimeLimitSeconds: 30
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
@@ -36,22 +36,19 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
       })
     }),
     {
-      name: 'archivy-state', // name of the item in the storage (must be unique)
+      name: 'archivy-state',
       storage: createJSONStorage(() => localStorage, {
         replacer: function (key) {
-          const v = this[key];
-          
+          const v = this[key];  // pure dinguerie car il y a un bogue dans zustand: https://github.com/pmndrs/zustand/discussions/2403
           if (v instanceof Date) {
             return { __type: 'Date', value: v.toISOString() };
           }
-    
           return v;
         },
         reviver: function(_, value: any) {
           if (value?.__type === 'Date') {
             return parseISO(value.value);
           }
-    
           return value;
         },
       }),
