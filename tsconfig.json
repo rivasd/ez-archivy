@@ -19,7 +19,8 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
   },
   "include": ["src", "electron/electron-env.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

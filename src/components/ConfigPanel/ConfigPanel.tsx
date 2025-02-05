@@ -1,8 +1,8 @@
-import { Modal, Form, Col, Row, Button } from 'react-bootstrap'
-import { useForm, SubmitHandler } from "react-hook-form"
+import { Modal, Form, Col, Row } from 'react-bootstrap'
+import { useForm } from "react-hook-form"
 import './ConfigPanel.css'
 import useArchivyStore from '../../state/store'
-import { ArchivyState } from '../../state/models'
+import { toLocalISOString } from '../../utils/utils'
 
 interface ConfigProps{
   show: boolean
@@ -19,30 +19,31 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
     register,
     handleSubmit,
     formState: {errors},
-
   } = useForm({
     defaultValues: {
       ...wholeState,
-      startDate: wholeState.startDate.toISOString().slice(0, 19),
-      endDate: wholeState.endDate.toISOString().slice(0, 19)
+      startDate: toLocalISOString(wholeState.startDate),
+      endDate: toLocalISOString(wholeState.endDate)
     }
   })
 
-  
-
-  const onSubmit: SubmitHandler<ArchivyState> = (data, evt) => {
+  const onSubmit = (data, evt) => {
     evt?.preventDefault()
-    wholeState.setWholeState(data)
+    wholeState.setWholeState({
+      ...data,
+      startDate: new Date(data.startDate),
+      endDate: new Date(data.endDate)
+    })
   }
 
   const save = ()=>{
-    handleSubmit(onSubmit)
+    handleSubmit(onSubmit)()
     onHide()
   }
 
   return (
     <Modal show={show} onHide={save} size='lg'>
-      <Modal.Header closeButton>
+      <Modal.Header closeButton closeVariant='white'>
         <Modal.Title>Configuration</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -74,19 +75,26 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
               <Col>
                 <Form.Group controlId='processStart'>
                   <Form.Label>Temps de début du compteur</Form.Label>
-                  <Form.Control type='datetime-local' step='1' {...register("startDate", {valueAsDate: true})}/>
+                  <Form.Control type='datetime-local' step='1' 
+                    {...register("startDate", 
+                      {
+                        valueAsDate: false, 
+                      })
+                    }/>
                 </Form.Group>
                 <Form.Group controlId='processEnd'>
                   <Form.Label>Temps de complétion du compteur</Form.Label>
-                  <Form.Control type='datetime-local' step='1'  {...register("endDate", {valueAsDate: true})}/>
+                  <Form.Control type='datetime-local' step='1'  
+                    {...register("endDate", 
+                      {
+                        valueAsDate: false,
+                      })
+                    }/>
                 </Form.Group>
               </Col>
             </Row>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button type='submit' form='config-form'>OK</Button>
-        </Modal.Footer>
     </Modal>
   )
 }

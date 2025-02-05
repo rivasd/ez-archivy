@@ -20,7 +20,8 @@ export const initialState: ArchivyState = {
     }
   ],
   alarmLengthSeconds: 120,
-  corruptionTimeLimitSeconds: 30
+  corruptionTimeLimitSeconds: 30,
+  corruptionCooldownMin: 5
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
@@ -33,7 +34,7 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
           traitre.username == username ? {...traitre, trahisonTime: new Date()} : {...traitre}
         ))
         return {...state, traitres: newTraitres}
-      })
+      },)
     }),
     {
       name: 'archivy-state',

@@ -50,6 +50,10 @@
     border-width: 2px;
 }
 
+.btn-close {
+    --bs-btn-close-color: var(--color-empire-blue)
+}
+
 .btn-sm {
     --bs-btn-font-size: 0.675rem
 }
