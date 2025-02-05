@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { ArchivyState, ArchivyActions } from './models'
 
 export const initialState: ArchivyState = {
-  LoginAttemptsCooldownSeconds: 60,
+  LoginCooldownMinutes: 60,
   maxLoginAttempts: 3,
   startDate: new Date(new Date().getTime() - (1 * 60 * 60 * 1000)),
   endDate: new Date(new Date().getTime() + (1 * 60 * 60 * 1000)),
@@ -20,8 +20,7 @@ export const initialState: ArchivyState = {
     }
   ],
   alarmLengthSeconds: 120,
-  corruptionTimeLimitSeconds: 30,
-  corruptionCooldownMin: 5
+  corruptionTimeLimitSeconds: 30
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
@@ -34,7 +33,8 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
           traitre.username == username ? {...traitre, trahisonTime: new Date()} : {...traitre}
         ))
         return {...state, traitres: newTraitres}
-      },)
+      }),
+      attemptCorruption: ()=>set(()=>({lastCorruptionAttempt: new Date()}))
     }),
     {
       name: 'archivy-state',

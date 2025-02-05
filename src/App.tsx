@@ -40,7 +40,7 @@ function App() {
       <main id='main' className='flex-grow-1 pt-3'>
         <Row className='me-0'>
           <Col id='left-pad'></Col>
-          <Col>
+          <Col xs={6}>
             <Container>
               <Status></Status>
               <Login onAlarm={alarm} onAccess={() => { }}></Login>

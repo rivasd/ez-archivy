@@ -8,6 +8,7 @@ export interface Traitre {
 export interface ArchivyActions {
   setWholeState: (newState: ArchivyState) => void
   setTrahison: (traitre: string) => void
+  attemptCorruption: ()=>void
 }
 
 export interface ArchivyState {
@@ -15,10 +16,10 @@ export interface ArchivyState {
   startDate: Date
   maxFailures: number
   maxLoginAttempts: number
-  LoginAttemptsCooldownSeconds: number
+  LoginCooldownMinutes: number
   alarmLengthSeconds: number
   corruptionTimeLimitSeconds: number
-  corruptionCooldownMin: number
+  lastCorruptionAttempt?: Date
   traitres: Traitre[]
 }
 

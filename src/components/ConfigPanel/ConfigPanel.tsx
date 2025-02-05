@@ -60,7 +60,7 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
                 </Form.Group>
                 <Form.Group controlId='maxLoginCooldown'>
                   <Form.Label>Cooldown d'essais de login</Form.Label>
-                  <Form.Control type='number' defaultValue={wholeState.LoginAttemptsCooldownSeconds} {...register("LoginAttemptsCooldownSeconds")}/>
+                  <Form.Control type='number' defaultValue={wholeState.LoginCooldownMinutes} {...register("LoginAttemptsCooldownSeconds")}/>
                 </Form.Group>
                 <Form.Group controlId='alarmLength'>
                   <Form.Label>Durée de l'alarme</Form.Label>
