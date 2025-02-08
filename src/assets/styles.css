@@ -17,17 +17,45 @@
     src: url('./AlmostThere-Numeric.otf');
 }
 
-:root {
+
+html.alarm {
+    --main-bg: #010205;
+    --color-jedi-blue: #a20101;
+    --color-empire-blue: #f32618;
+    --empire-blue-text-shadow: #ff5151;
+    --color-dark-blue: #911f17;
+    --color-light-gray: #ad2209;
+    --bs-body-bg:var(--main-bg);
+    --bs-border-color:var(--color-empire-blue);
+    --bs-border-width: 2px;
+    --bs-body-color:var(--color-empire-blue);
+    --bs-tertiary-bg: #ffffff00;
+    --light-gray-text-shadow: #eb3110;
+
+    .form-control:focus {
+        border-color: var(--color-empire-blue);
+        box-shadow: 0 0 5px .25rem rgba(253, 13, 13, 0.459);
+    }
+}
+
+
+:root{
+
     --main-bg: #010205;
     --color-jedi-blue: #0123A2;
     --color-empire-blue: #4ca4f7;
+    --empire-blue-text-shadow: #3f93f3;
     --color-dark-blue: #173d91;
     --color-light-gray: #cabda6;
     --bs-body-bg:var(--main-bg);
     --bs-border-color:var(--color-empire-blue);
     --bs-border-width: 2px;
     --bs-body-color:var(--color-empire-blue);
-} 
+    --bs-tertiary-bg: #ffffff00;
+    --light-gray-text-shadow:#bbab90;
+    --bs-input-focus-border-color:var(--color-empire-blue)
+}
+
 
 .btn-outline-primary {
     --bs-btn-color:var(--color-empire-blue);
@@ -37,6 +65,7 @@
     --bs-btn-hover-border-color: var(--color-empire-blue);
     --bs-btn-active-color: var(--color-jedi-blue);
     --bs-btn-hover-bg:#4ca4f791;
+
 }
 
 .btn-outline-secondary {

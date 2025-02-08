@@ -4,20 +4,64 @@ import Status from './components/Status/Status'
 import ConfigPanel from './components/ConfigPanel/ConfigPanel'
 import './App.css'
 import useArchivyStore from './state/store'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { initialState } from './state/store'
+import alarmSound from './assets/battle-alarm.mp3'
 
+const alarmPeriod = 590
 
 function App() {
 
   const setwholeState = useArchivyStore((state) => state.setWholeState)
+  const setTrahison = useArchivyStore((state)=>state.setTrahison)
+  const alarmDuration = useArchivyStore((state)=>state.alarmLengthSeconds)
   const [config, setConfig] = useState(false)
+  const alarmAudio = useRef(new Audio(alarmSound))
+  const alarmInterval = useRef<ReturnType<typeof setInterval>>()
 
   const handleClose = ()=>setConfig(false)
 
+  const swithcFn = useCallback(()=>{
+    let phase = true
+    return ()=>{
+      if(phase){
+        document.documentElement.classList.add('alarm')
+      }else{
+        document.documentElement.classList.remove('alarm')
+      }
+      phase = !phase
+    }
+  },[])
+
   const alarm = () => {
-    alert("alarm!!!")
+    //return
+    alarmAudio.current.loop = true
+    alarmAudio.current.play()
+    const endTime = Date.now() + alarmDuration*1000
+    const switchingFn = swithcFn()
+
+    switchingFn()
+    alarmInterval.current = setInterval(()=>{
+      if(Date.now() < endTime){
+        switchingFn()
+      }
+      else{
+        stopAlarm()
+      }
+    }, alarmPeriod)
+  }
+
+  const stopAlarm = ()=> {
+    alarmAudio.current.pause()
+    alarmAudio.current.currentTime = 0
+    clearInterval(alarmInterval.current)
+    document.documentElement.classList.remove('alarm')
+  }
+
+  const onAuth = (uname:string)=>{
+
+    setTrahison(uname)
   }
 
   useEffect(()=>{
@@ -26,7 +70,11 @@ function App() {
     }
   }, [setwholeState])
 
-  useHotkeys('ctrl+3+4', ()=>setConfig(true))
+  useHotkeys('ctrl+3+4', ()=>{
+    stopAlarm()
+    setConfig(true)
+  })
+
 
   return (
     <>
@@ -43,7 +91,7 @@ function App() {
           <Col xs={6}>
             <Container>
               <Status></Status>
-              <Login onAlarm={alarm} onAccess={() => { }}></Login>
+              <Login onAlarm={alarm} onAccess={onAuth}></Login>
             </Container>
           </Col>
           <Col id='right-pad'></Col>

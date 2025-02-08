@@ -20,7 +20,8 @@ export const initialState: ArchivyState = {
     }
   ],
   alarmLengthSeconds: 120,
-  corruptionTimeLimitSeconds: 30
+  corruptionTimeLimitSeconds: 30,
+  disabled:false
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(

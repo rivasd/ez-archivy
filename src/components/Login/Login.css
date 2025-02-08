@@ -3,3 +3,8 @@
   min-width: 0;
   align-items: flex-end;
 }
+
+.login{
+  max-width: 400px;
+  min-width: 250px;
+}

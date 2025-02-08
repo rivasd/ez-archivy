@@ -20,6 +20,7 @@ export interface ArchivyState {
   alarmLengthSeconds: number
   corruptionTimeLimitSeconds: number
   lastCorruptionAttempt?: Date
+  disabled: boolean
   traitres: Traitre[]
 }
 

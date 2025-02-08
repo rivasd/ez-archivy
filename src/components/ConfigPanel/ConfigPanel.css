@@ -1,0 +1,19 @@
+.traitre-title{
+  text-align: center;
+}
+
+.traitre-top {
+  border-radius: 0px 5px 0px 5px;
+}
+
+.traitre-middle {
+  border-radius: none;
+}
+
+.input-group-text {
+  min-width: 100px;
+}
+
+.btn-no-border {
+  border: 0px;
+}

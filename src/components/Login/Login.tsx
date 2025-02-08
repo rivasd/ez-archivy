@@ -1,57 +1,61 @@
-import { Button, Container,  Row, Form, Toast } from 'react-bootstrap'
+import { Button, Container, Form, Toast } from 'react-bootstrap'
 import './Login.css'
 import useArchivyStore from '../../state/store'
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { FormEvent, useCallback, useRef, useState } from 'react'
 
 interface LoginProps {
   onAlarm: ()=>void
-  onAccess: ()=>void
+  onAccess: (id:string)=>void
 }
 
-const Login = ({onAlarm}: LoginProps) => {
+const Login = ({onAlarm, onAccess}: LoginProps) => {
 
   const traitres = useArchivyStore((state => state.traitres))
   const loginCooldown = useArchivyStore((state)=>state.LoginCooldownMinutes)
   const attempt = useArchivyStore((state)=>state.attemptCorruption)
   const corruptionTimeLimit = useArchivyStore((state)=>state.corruptionTimeLimitSeconds)
+  const lastCorruptionAttempt = useArchivyStore((state)=>state.lastCorruptionAttempt)
   
-  const [attemptStart, setAttemptStart] = useState<Date|undefined>()
-  const [countdown, setCountDown] = useState(corruptionTimeLimit)
+  const [timeRemaining, setTimeRemaining] = useState<number>(0)
   const [oups, setOups] = useState(false)
 
   const timer = useRef<ReturnType<typeof setInterval>>()
 
-  const disabled = attemptStart ? (new Date().getTime() - attemptStart.getTime()) > loginCooldown*60000 : false
-  const inProgress = attemptStart && Date.now() > attemptStart.getTime() && Date.now() < (attemptStart.getTime()+corruptionTimeLimit*1000)
-  
-  const startLogin = ()=>{
-    if(!attemptStart || ((Date.now() - attemptStart.getTime()) > corruptionTimeLimit*1000)){
-      attempt()
-      setAttemptStart(new Date())
-    }
+  const disabled = lastCorruptionAttempt ? (Date.now() - lastCorruptionAttempt.getTime()) > loginCooldown*60000 : false
+
+  const stopCountdown = ()=>{
+    clearInterval(timer.current)
+    setTimeRemaining(0)
   }
 
-  useEffect(()=>{
-    if(!attemptStart){
-      return
-    }
-    timer.current = setInterval(()=>{
-      const remaining = (corruptionTimeLimit*1000 - (Date.now() - attemptStart!.getTime())) / 1000
-      if(remaining < 0 || !attemptStart){
-        clearInterval(timer.current)
-        setAttemptStart(undefined)
-        setCountDown(corruptionTimeLimit)
+  const getCountdownFn = useCallback(()=>{
+    const countdownEndTime = Date.now() + corruptionTimeLimit*1000
+    return () => {
+      const remaining = (countdownEndTime - Date.now()) / 1000
+      if(remaining < 0){
+        stopCountdown()
         onAlarm()
       }
       else{
-        setCountDown(Math.ceil(remaining))
+        setTimeRemaining(Math.ceil(remaining))
       }
-    }, 1000)
+    }
+  },[corruptionTimeLimit, onAlarm])
 
-    return ()=>clearInterval(timer.current)
-  },[attemptStart])
 
-  const checkAcess = (evt: FormEvent) => {
+
+  const startLogin = ()=>{
+    if(timeRemaining>0 || disabled){
+      //already counting down or on cooldown
+      return
+    }
+    attempt()
+    const countdownFn = getCountdownFn()
+    countdownFn()
+    timer.current = setInterval(countdownFn, 1000)
+  }
+
+  const checkAccess = (evt: FormEvent) => {
     evt.stopPropagation();
     evt.preventDefault();
     const uname = evt.currentTarget.elements['archive-username'].value
@@ -60,15 +64,16 @@ const Login = ({onAlarm}: LoginProps) => {
 
     if(hit){
       // do more trollage
-      setAttemptStart(undefined)
+      stopCountdown()
+      onAccess(uname)
     }else{
       setOups(true)
     }
   }
 
 	return (
-		<Container className='mt-5'>
-			<Form onSubmit={checkAcess}>
+		<Container className='mt-5 d-flex justify-content-center'>
+			<Form onSubmit={checkAccess} className='login'>
 				<Form.Group controlId='archive-username' className='mb-3'>
           <Form.Label>Identifiant</Form.Label>
           <Form.Control type='input' size='sm' onClick={startLogin}/>
@@ -88,24 +93,25 @@ const Login = ({onAlarm}: LoginProps) => {
             accèder
           </Button>
         </div>
-			</Form>
-      <Row>
-        {inProgress && 
+			
         <div>
-          Alarme dans {countdown} secondes
+          {timeRemaining > 0 && 
+          <div>
+            Alarme dans {timeRemaining} secondes
+          </div>
+          }
+          {
+            oups &&
+            <Toast onClose={()=>setOups(false)} show={oups} delay={3000} autohide>
+              <Toast.Header>
+                <strong className="me-auto">Ipelaille!</strong>
+                <small>erreur</small>
+              </Toast.Header>
+              <Toast.Body>identification invalide</Toast.Body>
+            </Toast>
+          }
         </div>
-        }
-        {
-          oups &&
-          <Toast onClose={()=>setOups(false)} show={oups} delay={3000} autohide>
-            <Toast.Header>
-              <strong className="me-auto">Ipelaille!</strong>
-              <small>erreur</small>
-            </Toast.Header>
-            <Toast.Body>identification invalide</Toast.Body>
-          </Toast>
-        }
-      </Row>
+      </Form>
 		</Container>
 	)
 }
