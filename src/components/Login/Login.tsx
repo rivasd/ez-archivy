@@ -1,6 +1,6 @@
 import { Button, Container, Form, Toast } from 'react-bootstrap'
 import './Login.css'
-import useArchivyStore from '../../state/store'
+import useArchivyStore, { useLastCorruptionTime } from '../../state/store'
 import { FormEvent, useCallback, useRef, useState } from 'react'
 
 interface LoginProps {
@@ -12,16 +12,16 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
 
   const traitres = useArchivyStore((state => state.traitres))
   const loginCooldown = useArchivyStore((state)=>state.LoginCooldownMinutes)
-  const attempt = useArchivyStore((state)=>state.attemptCorruption)
   const corruptionTimeLimit = useArchivyStore((state)=>state.corruptionTimeLimitSeconds)
-  const lastCorruptionAttempt = useArchivyStore((state)=>state.lastCorruptionAttempt)
+  const lastCompletedCorruption = useLastCorruptionTime()
+  const isActive = useArchivyStore((state)=>state.active)
+  const attempt = useArchivyStore((state)=>state.attemptCorruption)
   
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
   const [oups, setOups] = useState(false)
-
   const timer = useRef<ReturnType<typeof setInterval>>()
 
-  const disabled = lastCorruptionAttempt ? (Date.now() - lastCorruptionAttempt.getTime()) > loginCooldown*60000 : false
+  const onCooldown = lastCompletedCorruption ? (Date.now() - lastCompletedCorruption.getTime()) < loginCooldown*60000 : false // TODO bugged
 
   const stopCountdown = ()=>{
     clearInterval(timer.current)
@@ -45,10 +45,11 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
 
 
   const startLogin = ()=>{
-    if(timeRemaining>0 || disabled){
+    if(timeRemaining>0 || onCooldown){
       //already counting down or on cooldown
       return
     }
+    // TODO: can still start the login timer while alarm is blaring, do know if need to fix
     attempt()
     const countdownFn = getCountdownFn()
     countdownFn()
@@ -71,24 +72,29 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
     }
   }
 
+  const onDumbClick = ()=>{
+    attempt()
+    onAlarm()
+  }
+
 	return (
 		<Container className='mt-5 d-flex justify-content-center'>
 			<Form onSubmit={checkAccess} className='login'>
 				<Form.Group controlId='archive-username' className='mb-3'>
           <Form.Label>Identifiant</Form.Label>
-          <Form.Control type='input' size='sm' onClick={startLogin}/>
+          <Form.Control type='input' size='sm' onClick={startLogin} disabled={onCooldown || !isActive}/>
 				</Form.Group>
         <Form.Group controlId='archive-mdp'>
           <Form.Label>Mot de passe</Form.Label>
-          <Form.Control type='password' size='sm' onClick={startLogin}/>
+          <Form.Control type='password' size='sm' onClick={startLogin} disabled={onCooldown || !isActive}/>
 				</Form.Group>
         <div className='d-flex mt-3 justify-content-center login-controls'>
-          <Button variant='outline-primary' onClick={onAlarm}>Alerter</Button>
+          <Button variant='outline-primary' onClick={onDumbClick} disabled={onCooldown || !isActive}>Alerter</Button>
           <Button
           variant='outline-secondary'
           size='sm'
           type='submit'
-          disabled={disabled}
+          disabled={onCooldown || !isActive}
           >
             accèder
           </Button>
@@ -100,9 +106,14 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
             Alarme dans {timeRemaining} secondes
           </div>
           }
+          {onCooldown && 
+          <div>
+            Corruption récente, patientez
+          </div>
+          }
           {
-            oups &&
-            <Toast onClose={()=>setOups(false)} show={oups} delay={3000} autohide>
+            oups && //TODO: style this toast
+            <Toast onClose={()=>setOups(false)} show={oups} delay={3000} autohide>  
               <Toast.Header>
                 <strong className="me-auto">Ipelaille!</strong>
                 <small>erreur</small>

@@ -61,6 +61,12 @@ function App() {
 
   const onAuth = (uname:string)=>{
 
+    onGreatSuccess(uname)
+  }
+
+  const onGreatSuccess = (uname:string)=>{
+
+    
     setTrahison(uname)
   }
 

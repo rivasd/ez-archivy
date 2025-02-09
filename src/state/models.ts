@@ -9,6 +9,7 @@ export interface ArchivyActions {
   setWholeState: (newState: ArchivyState) => void
   setTrahison: (traitre: string) => void
   attemptCorruption: ()=>void
+  setDisabled:()=>void
 }
 
 export interface ArchivyState {
@@ -20,7 +21,7 @@ export interface ArchivyState {
   alarmLengthSeconds: number
   corruptionTimeLimitSeconds: number
   lastCorruptionAttempt?: Date
-  disabled: boolean
+  active: boolean
   traitres: Traitre[]
 }
 

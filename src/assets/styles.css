@@ -14,7 +14,7 @@
 
 @font-face {
     font-family: Almost-There;
-    src: url('./AlmostThere-Numeric.otf');
+    src: url('./SceletAF.otf');
 }
 
 
@@ -42,11 +42,12 @@ html.alarm {
 :root{
 
     --main-bg: #010205;
-    --color-jedi-blue: #0123A2;
-    --color-empire-blue: #4ca4f7;
+    --color-jedi-blue: rgb(1, 35, 162);
+    --color-empire-blue: rgb(76, 164, 247);
     --empire-blue-text-shadow: #3f93f3;
     --color-dark-blue: #173d91;
     --color-light-gray: #cabda6;
+    --bs-secondary-bg: #13171f;
     --bs-body-bg:var(--main-bg);
     --bs-border-color:var(--color-empire-blue);
     --bs-border-width: 2px;
@@ -85,4 +86,24 @@ html.alarm {
 
 .btn-sm {
     --bs-btn-font-size: 0.675rem
+}
+
+.form-control:disabled{
+    border: 1px grey;
+}
+
+.form-switch .form-check-input{
+    --bs-form-check-bg:#252c39a6;
+    --random-thing:rgb(121, 141, 179);
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28121, 141, 179, 0.95%29'/%3e%3c/svg%3e");
+}
+
+.form-switch .form-check-input:checked {
+    --random-thing:rgb(37, 106, 170);
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%281, 35, 162, 0.95%29'/%3e%3c/svg%3e");
+}
+
+.form-check-input:checked {
+    background-color: var(--color-empire-blue);
+    border-color: var(--color-empire-blue);
 }

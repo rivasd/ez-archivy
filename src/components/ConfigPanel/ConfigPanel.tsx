@@ -26,7 +26,11 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
     defaultValues: {
       ...wholeState,
       startDate: toLocalISOString(wholeState.startDate),
-      endDate: toLocalISOString(wholeState.endDate)
+      endDate: toLocalISOString(wholeState.endDate),
+      traitres: wholeState.traitres.map((traitre: Traitre)=> ({
+        ...traitre,
+        trahisonTime: traitre.trahisonTime ? toLocalISOString(traitre.trahisonTime) : undefined
+      }))
     }
   })
 
@@ -43,7 +47,7 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
       endDate: new Date(data.endDate),
       traitres: data.traitres.map((traitre: Traitre)=> ({
         ...traitre,
-        trahisonTime: traitre.trahisonTime ? toLocalISOString(traitre.trahisonTime) : undefined
+        trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined
       }))
     })
   }
@@ -62,6 +66,9 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
           <Form onSubmit={handleSubmit(onSubmit)} id='config-form'>
             <Row>
               <Col>
+                
+                <Form.Check type='switch' {...register('active')} label="ACTIVATION" />
+                
                 <Form.Group controlId='maxFailures'>
                   <Form.Label>Nombre max. de corruptions</Form.Label>
                   <Form.Control type='number' defaultValue={wholeState.maxFailures} {...register("maxFailures")} size='sm'/>

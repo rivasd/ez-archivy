@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 import {parseISO} from 'date-fns'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { ArchivyState, ArchivyActions } from './models'
@@ -21,7 +22,7 @@ export const initialState: ArchivyState = {
   ],
   alarmLengthSeconds: 120,
   corruptionTimeLimitSeconds: 30,
-  disabled:false
+  active:false
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
@@ -35,7 +36,8 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
         ))
         return {...state, traitres: newTraitres}
       }),
-      attemptCorruption: ()=>set(()=>({lastCorruptionAttempt: new Date()}))
+      attemptCorruption: ()=>set(()=>({lastCorruptionAttempt: new Date()})),
+      setDisabled: ()=>set(()=>({active:false}))
     }),
     {
       name: 'archivy-state',
@@ -57,5 +59,21 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
     },
   ),
 )
+
+// SELECTORS
+
+export const useLastCorruptionTime = ()=>{
+
+  const traitres = useArchivyStore((state)=>state.traitres)
+  const actualTraitres = traitres.filter((traitre)=>traitre.trahisonTime).sort((a, b)=> a.trahisonTime!.getTime() + b.trahisonTime!.getTime())
+  if(actualTraitres){
+    return actualTraitres[0].trahisonTime
+  }
+}
+
+export const useNumberOfCorruptions = ()=>{
+  const traitres = useArchivyStore((state)=>state.traitres)
+  return traitres.filter((traitre)=>traitre.trahisonTime).length
+}
 
 export default useArchivyStore

@@ -16,3 +16,17 @@
 .counter {
   font-family: Almost-There;
 }
+
+#archive-progress.completed {
+  --bs-progress-bar-bg: #00f35d;
+  --bs-progress-bar-color: #397a0e;
+  border: 3px solid #00f35d;
+  box-shadow: 0px 0px 20px 5px #00f35d;
+}
+
+#archive-progress.corrupted {
+  --bs-progress-bar-bg: #cf421e;
+  --bs-progress-bar-color: #921302;
+  border: 3px solid #cf421e;
+  box-shadow: 0px 0px 20px 5px #cf421e;
+}
