@@ -42,7 +42,7 @@ const Status = () => {
       return 'CORROMPU'
     }
     else{
-      return `${Math.min(progressPercent, 100).toFixed(1)} %`
+      return `${Math.min(progressPercent, 100).toFixed(1)}%`
     }
   }
 
@@ -59,7 +59,6 @@ const Status = () => {
   return (
     <>
       <div>
-
         <div>Progression</div>
         <ProgressBar
         now={trahisons >= maxTraitres ? 100: progressPercent}

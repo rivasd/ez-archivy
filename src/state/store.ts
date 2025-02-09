@@ -65,8 +65,8 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
 export const useLastCorruptionTime = ()=>{
 
   const traitres = useArchivyStore((state)=>state.traitres)
-  const actualTraitres = traitres.filter((traitre)=>traitre.trahisonTime).sort((a, b)=> a.trahisonTime!.getTime() + b.trahisonTime!.getTime())
-  if(actualTraitres){
+  const actualTraitres = traitres.filter((traitre)=>traitre.trahisonTime).sort((a, b)=> b.trahisonTime!.getTime() - a.trahisonTime!.getTime())
+  if(actualTraitres.length){
     return actualTraitres[0].trahisonTime
   }
 }

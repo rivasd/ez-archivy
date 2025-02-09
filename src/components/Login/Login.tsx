@@ -18,10 +18,10 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
   const attempt = useArchivyStore((state)=>state.attemptCorruption)
   
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
-  const [oups, setOups] = useState(false)
+  const [oups, setOups] = useState('')
   const timer = useRef<ReturnType<typeof setInterval>>()
 
-  const onCooldown = lastCompletedCorruption ? (Date.now() - lastCompletedCorruption.getTime()) < loginCooldown*60000 : false // TODO bugged
+  const onCooldown = lastCompletedCorruption ? Date.now() < (lastCompletedCorruption.getTime() + loginCooldown*60000) : false
 
   const stopCountdown = ()=>{
     clearInterval(timer.current)
@@ -61,14 +61,23 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
     evt.preventDefault();
     const uname = evt.currentTarget.elements['archive-username'].value
     const pass = evt.currentTarget.elements['archive-mdp'].value
+    evt.currentTarget.elements['archive-username'].value = ''
+    evt.currentTarget.elements['archive-mdp'].value = ''
     const hit = traitres.find((traitre)=>traitre.username==uname && traitre.password==pass)
 
     if(hit){
       // do more trollage
       stopCountdown()
-      onAccess(uname)
+      if(hit.trahisonTime){
+        //has already succeeded before... punish?
+        setOups("Corruption déjà effectuée! désolé")
+        onAlarm()
+      }
+      else{
+        onAccess(uname)
+      }
     }else{
-      setOups(true)
+      setOups('Erreur de login')
     }
   }
 
@@ -113,12 +122,12 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
           }
           {
             oups && //TODO: style this toast
-            <Toast onClose={()=>setOups(false)} show={oups} delay={3000} autohide>  
+            <Toast onClose={()=>setOups('')} show={Boolean(oups)} delay={3000} autohide>  
               <Toast.Header>
                 <strong className="me-auto">Ipelaille!</strong>
                 <small>erreur</small>
               </Toast.Header>
-              <Toast.Body>identification invalide</Toast.Body>
+              <Toast.Body>{oups}</Toast.Body>
             </Toast>
           }
         </div>

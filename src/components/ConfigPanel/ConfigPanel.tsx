@@ -70,7 +70,7 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
                 <Form.Check type='switch' {...register('active')} label="ACTIVATION" />
                 
                 <Form.Group controlId='maxFailures'>
-                  <Form.Label>Nombre max. de corruptions</Form.Label>
+                  <Form.Label>Nombre de vies</Form.Label>
                   <Form.Control type='number' defaultValue={wholeState.maxFailures} {...register("maxFailures")} size='sm'/>
                 </Form.Group>
                 <Form.Group controlId='maxLoginAttemps'>
@@ -78,7 +78,7 @@ const ConfigPanel = ({show, onHide}:ConfigProps)=>{
                   <Form.Control type='number' defaultValue={wholeState.maxLoginAttempts} {...register("maxLoginAttempts")} size='sm'/>
                 </Form.Group>
                 <Form.Group controlId='maxLoginCooldown'>
-                  <Form.Label>Cooldown d'essais de login</Form.Label>
+                  <Form.Label>Cooldown entre corruptions (m)</Form.Label>
                   <Form.Control type='number' defaultValue={wholeState.LoginCooldownMinutes} {...register("LoginCooldownMinutes")} size='sm'/>
                 </Form.Group>
                 <Form.Group controlId='alarmLength'>
