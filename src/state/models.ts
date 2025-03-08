@@ -8,8 +8,9 @@ export interface Traitre {
 export interface ArchivyActions {
   setWholeState: (newState: ArchivyState) => void
   setTrahison: (traitre: string) => void
-  attemptCorruption: ()=>void
-  setDisabled:()=>void
+  attemptCorruption: () => void
+  setDisabled: () => void
+
 }
 
 export interface ArchivyState {

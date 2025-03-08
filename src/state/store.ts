@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
-import {parseISO} from 'date-fns'
+import { parseISO } from 'date-fns'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { ArchivyState, ArchivyActions } from './models'
 
@@ -22,22 +22,22 @@ export const initialState: ArchivyState = {
   ],
   alarmLengthSeconds: 120,
   corruptionTimeLimitSeconds: 30,
-  active:false
+  active: false
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
   persist(
     (set) => ({
       ...initialState,
-      setWholeState: (newState: ArchivyState) => set(() => ({ ...newState, traitres:[...newState.traitres] })),
-      setTrahison: (username: string)=>set((state)=>{
-        const newTraitres = state.traitres.map((traitre)=>(
-          traitre.username == username ? {...traitre, trahisonTime: new Date()} : {...traitre}
+      setWholeState: (newState: ArchivyState) => set(() => ({ ...newState, traitres: [...newState.traitres] })),
+      setTrahison: (username: string) => set((state) => {
+        const newTraitres = state.traitres.map((traitre) => (
+          traitre.username == username ? { ...traitre, trahisonTime: new Date() } : { ...traitre }
         ))
-        return {...state, traitres: newTraitres}
+        return { ...state, traitres: newTraitres }
       }),
-      attemptCorruption: ()=>set(()=>({lastCorruptionAttempt: new Date()})),
-      setDisabled: ()=>set(()=>({active:false}))
+      attemptCorruption: () => set(() => ({ lastCorruptionAttempt: new Date() })),
+      setDisabled: () => set(() => ({ active: false }))
     }),
     {
       name: 'archivy-state',
@@ -49,7 +49,7 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
           }
           return v;
         },
-        reviver: function(_, value: any) {
+        reviver: function (_, value: any) {
           if (value?.__type === 'Date') {
             return parseISO(value.value);
           }
@@ -62,18 +62,18 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
 
 // SELECTORS
 
-export const useLastCorruptionTime = ()=>{
+export const useLastCorruptionTime = () => {
 
-  const traitres = useArchivyStore((state)=>state.traitres)
-  const actualTraitres = traitres.filter((traitre)=>traitre.trahisonTime).sort((a, b)=> b.trahisonTime!.getTime() - a.trahisonTime!.getTime())
-  if(actualTraitres.length){
+  const traitres = useArchivyStore((state) => state.traitres)
+  const actualTraitres = traitres.filter((traitre) => traitre.trahisonTime).sort((a, b) => b.trahisonTime!.getTime() - a.trahisonTime!.getTime())
+  if (actualTraitres.length) {
     return actualTraitres[0].trahisonTime
   }
 }
 
-export const useNumberOfCorruptions = ()=>{
-  const traitres = useArchivyStore((state)=>state.traitres)
-  return traitres.filter((traitre)=>traitre.trahisonTime).length
+export const useNumberOfCorruptions = () => {
+  const traitres = useArchivyStore((state) => state.traitres)
+  return traitres.filter((traitre) => traitre.trahisonTime).length
 }
 
 export default useArchivyStore

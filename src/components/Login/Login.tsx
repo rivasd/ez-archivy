@@ -2,50 +2,52 @@ import { Button, Container, Form, Toast } from 'react-bootstrap'
 import './Login.css'
 import useArchivyStore, { useLastCorruptionTime } from '../../state/store'
 import { FormEvent, useCallback, useRef, useState } from 'react'
+import Dingueries from '../Dingueries/Dingueries'
 
 interface LoginProps {
-  onAlarm: ()=>void
-  onAccess: (id:string)=>void
+  onAlarm: () => void
+  onAccess: (id: string) => void
 }
 
-const Login = ({onAlarm, onAccess}: LoginProps) => {
+const Login = ({ onAlarm, onAccess }: LoginProps) => {
 
   const traitres = useArchivyStore((state => state.traitres))
-  const loginCooldown = useArchivyStore((state)=>state.LoginCooldownMinutes)
-  const corruptionTimeLimit = useArchivyStore((state)=>state.corruptionTimeLimitSeconds)
+  const loginCooldown = useArchivyStore((state) => state.LoginCooldownMinutes)
+  const corruptionTimeLimit = useArchivyStore((state) => state.corruptionTimeLimitSeconds)
   const lastCompletedCorruption = useLastCorruptionTime()
-  const isActive = useArchivyStore((state)=>state.active)
-  const attempt = useArchivyStore((state)=>state.attemptCorruption)
-  
+  const isActive = useArchivyStore((state) => state.active)
+  const attempt = useArchivyStore((state) => state.attemptCorruption)
+
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
   const [oups, setOups] = useState('')
+  const [loginStep, setLoginStep] = useState<undefined | number>()
   const timer = useRef<ReturnType<typeof setInterval>>()
 
-  const onCooldown = lastCompletedCorruption ? Date.now() < (lastCompletedCorruption.getTime() + loginCooldown*60000) : false
+  const onCooldown = lastCompletedCorruption ? Date.now() < (lastCompletedCorruption.getTime() + loginCooldown * 60000) : false
 
-  const stopCountdown = ()=>{
+  const stopCountdown = () => {
     clearInterval(timer.current)
     setTimeRemaining(0)
   }
 
-  const getCountdownFn = useCallback(()=>{
-    const countdownEndTime = Date.now() + corruptionTimeLimit*1000
+  const getCountdownFn = useCallback(() => {
+    const countdownEndTime = Date.now() + corruptionTimeLimit * 1000
     return () => {
       const remaining = (countdownEndTime - Date.now()) / 1000
-      if(remaining < 0){
+      if (remaining < 0) {
         stopCountdown()
         onAlarm()
       }
-      else{
+      else {
         setTimeRemaining(Math.ceil(remaining))
       }
     }
-  },[corruptionTimeLimit, onAlarm])
+  }, [corruptionTimeLimit, onAlarm])
 
 
 
-  const startLogin = ()=>{
-    if(timeRemaining>0 || onCooldown){
+  const startLogin = () => {
+    if (timeRemaining > 0 || onCooldown) {
       //already counting down or on cooldown
       return
     }
@@ -63,66 +65,76 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
     const pass = evt.currentTarget.elements['archive-mdp'].value
     evt.currentTarget.elements['archive-username'].value = ''
     evt.currentTarget.elements['archive-mdp'].value = ''
-    const hit = traitres.find((traitre)=>traitre.username==uname && traitre.password==pass)
+    const hit = traitres.find((traitre) => traitre.username == uname && traitre.password == pass)
 
-    if(hit){
+    if (hit) {
       // do more trollage
-      stopCountdown()
-      if(hit.trahisonTime){
+      stopCountdown() // on enlève vraiment le countdown?
+
+      if (hit.trahisonTime) {
         //has already succeeded before... punish?
         setOups("Corruption déjà effectuée! désolé")
         onAlarm()
       }
-      else{
+      else {
         onAccess(uname)
+        setLoginStep(0)
       }
-    }else{
+    } else {
       setOups('Erreur de login')
     }
   }
 
-  const onDumbClick = ()=>{
+  const onDumbClick = () => {
     attempt()
     onAlarm()
   }
 
-	return (
-		<Container className='mt-5 d-flex justify-content-center'>
-			<Form onSubmit={checkAccess} className='login'>
-				<Form.Group controlId='archive-username' className='mb-3'>
+  return (
+    <Container className='mt-5 d-flex justify-content-center'>
+      <Form onSubmit={checkAccess} className='login'>
+        <Form.Group controlId='archive-username' className='mb-3'>
           <Form.Label>Identifiant</Form.Label>
-          <Form.Control type='input' size='sm' onClick={startLogin} disabled={onCooldown || !isActive}/>
-				</Form.Group>
+          <Form.Control type='input' size='sm' onClick={startLogin} disabled={onCooldown || !isActive} />
+        </Form.Group>
         <Form.Group controlId='archive-mdp'>
           <Form.Label>Mot de passe</Form.Label>
-          <Form.Control type='password' size='sm' onClick={startLogin} disabled={onCooldown || !isActive}/>
-				</Form.Group>
+          <Form.Control type='password' size='sm' onClick={startLogin} disabled={onCooldown || !isActive} />
+        </Form.Group>
         <div className='d-flex mt-3 justify-content-center login-controls'>
           <Button variant='outline-primary' onClick={onDumbClick} disabled={onCooldown || !isActive}>Alerter</Button>
           <Button
-          variant='outline-secondary'
-          size='sm'
-          type='submit'
-          disabled={onCooldown || !isActive}
+            variant='outline-secondary'
+            size='sm'
+            type='submit'
+            disabled={onCooldown || !isActive}
           >
             accèder
           </Button>
         </div>
-			
+
         <div>
-          {timeRemaining > 0 && 
-          <div>
-            Alarme dans {timeRemaining} secondes
-          </div>
+          {timeRemaining > 0 &&
+            <div>
+              Alarme dans {timeRemaining} secondes
+            </div>
           }
-          {onCooldown && 
-          <div>
-            Corruption récente, patientez
-          </div>
+          {onCooldown &&
+            <div>
+              Corruption récente, patientez
+            </div>
+          }
+          {
+            // Démarrer les dingueries après le login initial
+            loginStep && <Dingueries {...{
+              pos: loginStep,
+              onAlarm: onAlarm,
+              onSuccess: onAccess
+            }} />
           }
           {
             oups && //TODO: style this toast
-            <Toast onClose={()=>setOups('')} show={Boolean(oups)} delay={3000} autohide>  
+            <Toast onClose={() => setOups('')} show={Boolean(oups)} delay={3000} autohide>
               <Toast.Header>
                 <strong className="me-auto">Ipelaille!</strong>
                 <small>erreur</small>
@@ -132,8 +144,8 @@ const Login = ({onAlarm, onAccess}: LoginProps) => {
           }
         </div>
       </Form>
-		</Container>
-	)
+    </Container>
+  )
 }
 
 export default Login

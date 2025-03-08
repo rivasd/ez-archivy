@@ -14,69 +14,69 @@ const alarmPeriod = 590
 function App() {
 
   const setwholeState = useArchivyStore((state) => state.setWholeState)
-  const setTrahison = useArchivyStore((state)=>state.setTrahison)
-  const alarmDuration = useArchivyStore((state)=>state.alarmLengthSeconds)
+  const setTrahison = useArchivyStore((state) => state.setTrahison)
+  const alarmDuration = useArchivyStore((state) => state.alarmLengthSeconds)
   const [config, setConfig] = useState(false)
   const alarmAudio = useRef(new Audio(alarmSound))
   const alarmInterval = useRef<ReturnType<typeof setInterval>>()
 
-  const handleClose = ()=>setConfig(false)
+  const handleClose = () => setConfig(false)
 
-  const swithcFn = useCallback(()=>{
+  const swithcFn = useCallback(() => {
     let phase = true
-    return ()=>{
-      if(phase){
+    return () => {
+      if (phase) {
         document.documentElement.classList.add('alarm')
-      }else{
+      } else {
         document.documentElement.classList.remove('alarm')
       }
       phase = !phase
     }
-  },[])
+  }, [])
 
   const alarm = () => {
     //return
     alarmAudio.current.loop = true
     alarmAudio.current.play()
-    const endTime = Date.now() + alarmDuration*1000
+    const endTime = Date.now() + alarmDuration * 1000
     const switchingFn = swithcFn()
 
     switchingFn()
-    alarmInterval.current = setInterval(()=>{
-      if(Date.now() < endTime){
+    alarmInterval.current = setInterval(() => {
+      if (Date.now() < endTime) {
         switchingFn()
       }
-      else{
+      else {
         stopAlarm()
       }
     }, alarmPeriod)
   }
 
-  const stopAlarm = ()=> {
+  const stopAlarm = () => {
     alarmAudio.current.pause()
     alarmAudio.current.currentTime = 0
     clearInterval(alarmInterval.current)
     document.documentElement.classList.remove('alarm')
   }
 
-  const onAuth = (uname:string)=>{
+  const onAuth = (uname: string) => {
 
     onGreatSuccess(uname)
   }
 
-  const onGreatSuccess = (uname:string)=>{
+  const onGreatSuccess = (uname: string) => {
 
-    
+
     setTrahison(uname)
   }
 
-  useEffect(()=>{
-    if(!localStorage.getItem('archivy-state')){
+  useEffect(() => {
+    if (!localStorage.getItem('archivy-state')) {
       setwholeState(initialState)
     }
   }, [setwholeState])
 
-  useHotkeys('ctrl+3+4', ()=>{
+  useHotkeys('ctrl+3+4', () => {
     stopAlarm()
     setConfig(true)
   })
@@ -104,9 +104,10 @@ function App() {
         </Row>
 
         <ConfigPanel
-        show={config}
-        onHide={handleClose}
+          show={config}
+          onHide={handleClose}
         />
+
       </main>
       <footer>
         <Container id='footer-contents'>
