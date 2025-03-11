@@ -20,6 +20,7 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
 
   const [timeRemaining, setTimeRemaining] = useState<number>(0)
   const [oups, setOups] = useState('')
+  const [traitreName, setTraitreName] = useState('')
   const [loginStep, setLoginStep] = useState<undefined | number>()
   const timer = useRef<ReturnType<typeof setInterval>>()
 
@@ -77,8 +78,9 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
         onAlarm()
       }
       else {
-        onAccess(uname)
+        //onAccess(uname)
         setLoginStep(0)
+        setTraitreName(uname)
       }
     } else {
       setOups('Erreur de login')
@@ -88,6 +90,7 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
   const onDumbClick = () => {
     attempt()
     onAlarm()
+    stopCountdown()
   }
 
   return (
@@ -126,11 +129,12 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
           }
           {
             // Démarrer les dingueries après le login initial
-            loginStep && <Dingueries {...{
+            loginStep !== undefined && traitreName ? <Dingueries {...{
               pos: loginStep,
               onAlarm: onAlarm,
-              onSuccess: onAccess
-            }} />
+              onSuccess: onAccess,
+              traitreName: traitreName
+            }} /> : null
           }
           {
             oups && //TODO: style this toast
