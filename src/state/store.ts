@@ -22,7 +22,8 @@ export const initialState: ArchivyState = {
   ],
   alarmLengthSeconds: 120,
   corruptionTimeLimitSeconds: 30,
-  active: false
+  active: false,
+  now: new Date()
 }
 
 export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
@@ -37,7 +38,8 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
         return { ...state, traitres: newTraitres }
       }),
       attemptCorruption: () => set(() => ({ lastCorruptionAttempt: new Date() })),
-      setDisabled: () => set(() => ({ active: false }))
+      setDisabled: () => set(() => ({ active: false })),
+      timeStep: () => set(()=>({now: new Date}))
     }),
     {
       name: 'archivy-state',

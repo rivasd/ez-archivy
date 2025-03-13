@@ -1,6 +1,6 @@
 import { Modal } from "react-bootstrap";
 import NotARobot from "../NotARobot/NotARobot"
-import { useState } from "react";
+import { useState, memo } from "react";
 
 const orderDingueries = [
   NotARobot
@@ -18,16 +18,22 @@ const Dingueries = (props: DingueriesProps) => {
   const Component = orderDingueries[props.pos]
   const [shouldShow, setShouldShow] = useState(true)
 
+  const succeed = (name) => {
+    setShouldShow(false)
+    props.onSuccess(name)
+  }
+
   return (
-    <Modal show={shouldShow} onExit={() => {
+    <Modal show={shouldShow} onHide={() => {
       setShouldShow(false)
       props.onAlarm()
-    }}>
+    }}
+    keyboard={false} backdrop="static">
       <Modal.Header closeButton closeVariant='white'>
         <Modal.Title>Prouvez votre valeur pour continuer</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Component {...props}></Component>
+        <Component {... {...props, onSuccess:succeed}}></Component>
       </Modal.Body>
       <Modal.Footer>
         Ne fermez pas cette fenêtre sous peine d'alarme!
@@ -36,4 +42,4 @@ const Dingueries = (props: DingueriesProps) => {
   )
 }
 
-export default Dingueries
+export default memo(Dingueries)

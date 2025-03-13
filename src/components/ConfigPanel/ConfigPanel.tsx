@@ -5,6 +5,7 @@ import useArchivyStore from '../../state/store'
 import { toLocalISOString } from '../../utils/utils'
 import { Traitre } from '../../state/models'
 import { Trash } from 'react-bootstrap-icons'
+import {memo} from 'react'
 
 interface ConfigProps {
   show: boolean
@@ -14,7 +15,7 @@ interface ConfigProps {
 
 const ConfigPanel = ({ show, onHide }: ConfigProps) => {
 
-  const wholeState = useArchivyStore((state) => state)
+  const setWholeState = useArchivyStore((state) => state.setWholeState)
 
 
   const {
@@ -24,10 +25,15 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
     control
   } = useForm({
     defaultValues: {
-      ...wholeState,
-      startDate: toLocalISOString(wholeState.startDate),
-      endDate: toLocalISOString(wholeState.endDate),
-      traitres: wholeState.traitres.map((traitre: Traitre) => ({
+      active: useArchivyStore((s)=>s.active),
+      maxFailures: useArchivyStore((s)=>s.maxFailures),
+      maxLoginAttempts: useArchivyStore((s)=>s.maxLoginAttempts),
+      LoginCooldownMinutes: useArchivyStore((s)=>s.maxLoginAttempts),
+      alarmLengthSeconds : useArchivyStore((s)=>s.alarmLengthSeconds),
+      corruptionTimeLimitSeconds:  useArchivyStore((s)=>s.corruptionTimeLimitSeconds),
+      startDate: toLocalISOString(useArchivyStore((s)=>s.startDate)),
+      endDate: toLocalISOString(useArchivyStore((s)=>s.endDate)),
+      traitres: useArchivyStore((s)=>s.traitres).map((traitre: Traitre) => ({
         ...traitre,
         trahisonTime: traitre.trahisonTime ? toLocalISOString(traitre.trahisonTime) : undefined
       }))
@@ -41,13 +47,14 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
 
   const onSubmit = (data, evt) => {
     evt?.preventDefault()
-    wholeState.setWholeState({
+    setWholeState({
       ...data,
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
       traitres: data.traitres.map((traitre: Traitre) => ({
         ...traitre,
-        trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined
+        trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined,
+      now: new Date
       }))
     })
   }
@@ -71,23 +78,23 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
 
               <Form.Group controlId='maxFailures'>
                 <Form.Label>Nombre de vies</Form.Label>
-                <Form.Control type='number' defaultValue={wholeState.maxFailures} {...register("maxFailures")} size='sm' />
+                <Form.Control type='number'  {...register("maxFailures")} size='sm' />
               </Form.Group>
               <Form.Group controlId='maxLoginAttemps'>
                 <Form.Label>Max. essais login</Form.Label>
-                <Form.Control type='number' defaultValue={wholeState.maxLoginAttempts} {...register("maxLoginAttempts")} size='sm' />
+                <Form.Control type='number'  {...register("maxLoginAttempts")} size='sm' />
               </Form.Group>
               <Form.Group controlId='maxLoginCooldown'>
                 <Form.Label>Cooldown entre corruptions (m)</Form.Label>
-                <Form.Control type='number' defaultValue={wholeState.LoginCooldownMinutes} {...register("LoginCooldownMinutes")} size='sm' />
+                <Form.Control type='number' {...register("LoginCooldownMinutes")} size='sm' />
               </Form.Group>
               <Form.Group controlId='alarmLength'>
                 <Form.Label>Durée de l'alarme</Form.Label>
-                <Form.Control type='number' defaultValue={wholeState.alarmLengthSeconds} {...register("alarmLengthSeconds")} size='sm' />
+                <Form.Control type='number'  {...register("alarmLengthSeconds")} size='sm' />
               </Form.Group>
               <Form.Group controlId='corruptionTimeLimit'>
                 <Form.Label>Temps pour complèter une corruption</Form.Label>
-                <Form.Control type='number' defaultValue={wholeState.corruptionTimeLimitSeconds} {...register("corruptionTimeLimitSeconds")} size='sm' />
+                <Form.Control type='number'  {...register("corruptionTimeLimitSeconds")} size='sm' />
               </Form.Group>
               <Form.Group controlId='processStart'>
                 <Form.Label>Temps de début du compteur</Form.Label>
@@ -145,4 +152,4 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
   )
 }
 
-export default ConfigPanel
+export default memo(ConfigPanel)

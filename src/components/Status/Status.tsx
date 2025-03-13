@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { ProgressBar, Row, Col } from "react-bootstrap"
 import useArchivyStore, { useNumberOfCorruptions } from "../../state/store"
 import './Status.css'
@@ -10,12 +9,14 @@ const Status = () => {
   const maxTraitres = useArchivyStore((state)=>state.maxFailures)
   const lastAttempt = useArchivyStore((state)=>state.lastCorruptionAttempt)
   const setDisabled = useArchivyStore((state)=>state.setDisabled)
-  const [currTime, setCurrTime] = useState<Date>(new Date)
+  const currTime = useArchivyStore((state)=>state.now)
   
   // costly compute, move outside rendering loop
   const trahisons = useNumberOfCorruptions()
   const progressPercent = Math.floor((currTime.getTime() - startDate.getTime()) / (endDate.getTime() - startDate.getTime()) * 1000) / 10
-  
+  if(progressPercent >= 100){
+    setDisabled()
+  }
 
   const getTimeSinceLastCorr = ()=>{
     if(lastAttempt){
@@ -45,16 +46,6 @@ const Status = () => {
       return `${Math.min(progressPercent, 100).toFixed(1)}%`
     }
   }
-
-  useEffect(()=>{
-    const interval = setInterval(()=>{
-      if(progressPercent >= 100){
-        setDisabled()
-      }
-      setCurrTime(new Date())
-    }, 1000)
-    return ()=>clearInterval(interval)
-  }, [progressPercent])
 
   return (
     <>

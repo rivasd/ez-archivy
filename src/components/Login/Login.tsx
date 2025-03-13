@@ -1,62 +1,33 @@
 import { Button, Container, Form, Toast } from 'react-bootstrap'
 import './Login.css'
 import useArchivyStore, { useLastCorruptionTime } from '../../state/store'
-import { FormEvent, useCallback, useRef, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import Dingueries from '../Dingueries/Dingueries'
 
 interface LoginProps {
   onAlarm: () => void
   onAccess: (id: string) => void
+  startCountdown: ()=> void
+  stopCountdown: ()=> void
 }
 
-const Login = ({ onAlarm, onAccess }: LoginProps) => {
+const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown }: LoginProps) => {
 
   const traitres = useArchivyStore((state => state.traitres))
   const loginCooldown = useArchivyStore((state) => state.LoginCooldownMinutes)
-  const corruptionTimeLimit = useArchivyStore((state) => state.corruptionTimeLimitSeconds)
   const lastCompletedCorruption = useLastCorruptionTime()
   const isActive = useArchivyStore((state) => state.active)
   const attempt = useArchivyStore((state) => state.attemptCorruption)
 
-  const [timeRemaining, setTimeRemaining] = useState<number>(0)
   const [oups, setOups] = useState('')
   const [traitreName, setTraitreName] = useState('')
   const [loginStep, setLoginStep] = useState<undefined | number>()
-  const timer = useRef<ReturnType<typeof setInterval>>()
 
   const onCooldown = lastCompletedCorruption ? Date.now() < (lastCompletedCorruption.getTime() + loginCooldown * 60000) : false
 
-  const stopCountdown = () => {
-    clearInterval(timer.current)
-    setTimeRemaining(0)
-  }
-
-  const getCountdownFn = useCallback(() => {
-    const countdownEndTime = Date.now() + corruptionTimeLimit * 1000
-    return () => {
-      const remaining = (countdownEndTime - Date.now()) / 1000
-      if (remaining < 0) {
-        stopCountdown()
-        onAlarm()
-      }
-      else {
-        setTimeRemaining(Math.ceil(remaining))
-      }
-    }
-  }, [corruptionTimeLimit, onAlarm])
-
-
-
   const startLogin = () => {
-    if (timeRemaining > 0 || onCooldown) {
-      //already counting down or on cooldown
-      return
-    }
-    // TODO: can still start the login timer while alarm is blaring, do know if need to fix
     attempt()
-    const countdownFn = getCountdownFn()
-    countdownFn()
-    timer.current = setInterval(countdownFn, 1000)
+    startCountdown()
   }
 
   const checkAccess = (evt: FormEvent) => {
@@ -70,8 +41,7 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
 
     if (hit) {
       // do more trollage
-      stopCountdown() // on enlève vraiment le countdown?
-
+      //stopCountdown()
       if (hit.trahisonTime) {
         //has already succeeded before... punish?
         setOups("Corruption déjà effectuée! désolé")
@@ -114,19 +84,6 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
           >
             accèder
           </Button>
-        </div>
-
-        <div>
-          {timeRemaining > 0 &&
-            <div>
-              Alarme dans {timeRemaining} secondes
-            </div>
-          }
-          {onCooldown &&
-            <div>
-              Corruption récente, patientez
-            </div>
-          }
           {
             // Démarrer les dingueries après le login initial
             loginStep !== undefined && traitreName ? <Dingueries {...{
@@ -135,6 +92,13 @@ const Login = ({ onAlarm, onAccess }: LoginProps) => {
               onSuccess: onAccess,
               traitreName: traitreName
             }} /> : null
+          }
+        </div>
+        <div>
+          {onCooldown &&
+            <div>
+              Corruption récente, patientez
+            </div>
           }
           {
             oups && //TODO: style this toast
