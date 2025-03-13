@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { useShallow } from 'zustand/shallow'
 import { parseISO } from 'date-fns'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { ArchivyState, ArchivyActions } from './models'
@@ -30,7 +29,7 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
   persist(
     (set) => ({
       ...initialState,
-      setWholeState: (newState: ArchivyState) => set(() => ({ ...newState, traitres: [...newState.traitres] })),
+      setWholeState: (newState: Partial<ArchivyState>) => set((oldState) => ({ ...oldState, ...newState, traitres: [...newState.traitres] })),
       setTrahison: (username: string) => set((state) => {
         const newTraitres = state.traitres.map((traitre) => (
           traitre.username == username ? { ...traitre, trahisonTime: new Date() } : { ...traitre }

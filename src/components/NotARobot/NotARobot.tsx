@@ -9,9 +9,9 @@ const NotARobot = (props: DingueriesProps) => {
 
 	const imagesTypes = useMemo(()=>{
 		const images = import.meta.glob('../../assets/guigui/*.jpg', { eager: true, as: 'url' }) as Object
-		const imgArr = Object.entries(images).map(([key, val]) => ({
+		const imgArr = Object.entries(images).map(([_, val]) => ({
 			url: val,
-			topics: ["Fiergaillard", 'some other thing']
+			topics: ["Fringant jeune homme"]
 		}))
 		return imgArr
 	}, [])
@@ -21,11 +21,11 @@ const NotARobot = (props: DingueriesProps) => {
 		<Container >
 			<div className="captcha">
 			<FaCaptcha
-				captchaTopics={['Fiergaillard', 'some other thing']}
+				captchaTopics={['Fringant jeune homme']}
 				onVerificationComplete={() => props.onSuccess(props.traitreName)}
 				imgTopicUrls={imagesTypes}
 				cellsWide={3}
-				//headerText="Cliquez sur toutes les images comprenant un 'fringant jeune homme'."
+				headerText="Cliquez sur toutes les images comprenant un 'fringant jeune homme'."
 				helpText="Ce jeune Guillaume est, ma foi, un fringant jeune homme"
 				maxAttempts={1}
 				notARobotText="Je nie être dénué(e) de bonnes intentions"

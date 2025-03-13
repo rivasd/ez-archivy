@@ -1,4 +1,4 @@
-import { Row, Col, Container } from 'react-bootstrap'
+import { Row, Col, Container, Toast } from 'react-bootstrap'
 import Login from './components/Login/Login'
 import Status from './components/Status/Status'
 import ConfigPanel from './components/ConfigPanel/ConfigPanel'
@@ -22,9 +22,11 @@ function App() {
   const [config, setConfig] = useState(false)
   const [countdownEnd, setCountdownEnd] = useState<Date | undefined>()
   const [alarmEnd, setAlarmEnd] = useState<Date | undefined>()
+  const [oups, setOups] = useState('')
   const alarmAudio = useRef(new Audio(alarmSound))
   const alarmInterval = useRef<ReturnType<typeof setInterval>>()
   const ticker = useRef<ReturnType<typeof setInterval>>()
+  
 
   const handleClose = useCallback(() => setConfig(false), [])
 
@@ -96,6 +98,10 @@ function App() {
     setCountdownEnd(undefined)
   }
 
+  const sendError = (mess: string)=>{
+    setOups(mess)
+  }
+
   useEffect(() => {
     if (!localStorage.getItem('archivy-state')) {
       setwholeState(initialState)
@@ -123,7 +129,7 @@ function App() {
           <Col xs={6}>
             <Container>
               <Status></Status>
-              <Login onAlarm={alarm} onAccess={onAuth} startCountdown={startCountdown} stopCountdown={stopCountdown}/>
+              <Login onAlarm={alarm} onAccess={onAuth} startCountdown={startCountdown} stopCountdown={stopCountdown} setOups={sendError}/>
               {countdownEnd && <Compteur end={countdownEnd} onCompteurEnd={alarm}/>}
             </Container>
           </Col>
@@ -137,6 +143,26 @@ function App() {
 
       </main>
       <footer>
+      {
+            oups && //TODO: style this toast
+            <Toast onClose={() => setOups('')} show={
+              Boolean(oups)
+              } 
+              delay={3000}
+              autohide
+              className='fixed-bottom mx-auto'
+              >
+              <Toast.Header closeVariant='white'>
+                <strong className="me-auto">Ipelaille!</strong>
+                <small>t'as raté XD</small>
+              </Toast.Header>
+              <Toast.Body>{
+                <p  className='mx-auto text-center'>
+                {oups}
+              </p>
+              }</Toast.Body>
+            </Toast>
+          }
         <Container id='footer-contents'>
           <span>© AKELA XV PRODUCTIONS</span>
         </Container>

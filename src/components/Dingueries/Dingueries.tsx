@@ -28,7 +28,7 @@ const Dingueries = (props: DingueriesProps) => {
       setShouldShow(false)
       props.onAlarm()
     }}
-    keyboard={false} backdrop="static">
+    keyboard={false} backdrop="static" className="dingueries">
       <Modal.Header closeButton closeVariant='white'>
         <Modal.Title>Prouvez votre valeur pour continuer</Modal.Title>
       </Modal.Header>

@@ -9,21 +9,23 @@ interface LoginProps {
   onAccess: (id: string) => void
   startCountdown: ()=> void
   stopCountdown: ()=> void
+  setOups: (s:string)=>void
 }
 
-const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown }: LoginProps) => {
+const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: LoginProps) => {
 
   const traitres = useArchivyStore((state => state.traitres))
   const loginCooldown = useArchivyStore((state) => state.LoginCooldownMinutes)
   const lastCompletedCorruption = useLastCorruptionTime()
   const isActive = useArchivyStore((state) => state.active)
+  const now = useArchivyStore((state)=>state.now)
   const attempt = useArchivyStore((state) => state.attemptCorruption)
 
-  const [oups, setOups] = useState('')
+
   const [traitreName, setTraitreName] = useState('')
   const [loginStep, setLoginStep] = useState<undefined | number>()
 
-  const onCooldown = lastCompletedCorruption ? Date.now() < (lastCompletedCorruption.getTime() + loginCooldown * 60000) : false
+  const onCooldown = lastCompletedCorruption ? now < new Date(lastCompletedCorruption.getTime() + loginCooldown * 60000) : false
 
   const startLogin = () => {
     attempt()
@@ -40,20 +42,18 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown }: LoginProps)
     const hit = traitres.find((traitre) => traitre.username == uname && traitre.password == pass)
 
     if (hit) {
-      // do more trollage
-      //stopCountdown()
       if (hit.trahisonTime) {
         //has already succeeded before... punish?
         setOups("Corruption déjà effectuée! désolé")
         onAlarm()
       }
       else {
-        //onAccess(uname)
         setLoginStep(0)
         setTraitreName(uname)
       }
     } else {
       setOups('Erreur de login')
+      onAlarm()
     }
   }
 
@@ -100,16 +100,7 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown }: LoginProps)
               Corruption récente, patientez
             </div>
           }
-          {
-            oups && //TODO: style this toast
-            <Toast onClose={() => setOups('')} show={Boolean(oups)} delay={3000} autohide>
-              <Toast.Header>
-                <strong className="me-auto">Ipelaille!</strong>
-                <small>erreur</small>
-              </Toast.Header>
-              <Toast.Body>{oups}</Toast.Body>
-            </Toast>
-          }
+          
         </div>
       </Form>
     </Container>

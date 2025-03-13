@@ -5,7 +5,7 @@ import useArchivyStore from '../../state/store'
 import { toLocalISOString } from '../../utils/utils'
 import { Traitre } from '../../state/models'
 import { Trash } from 'react-bootstrap-icons'
-import {memo} from 'react'
+import {memo, useEffect} from 'react'
 
 interface ConfigProps {
   show: boolean
@@ -16,29 +16,33 @@ interface ConfigProps {
 const ConfigPanel = ({ show, onHide }: ConfigProps) => {
 
   const setWholeState = useArchivyStore((state) => state.setWholeState)
-
+  const traitres = useArchivyStore((s)=>s.traitres)
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    control
+    control,
+    setValue,
   } = useForm({
     defaultValues: {
       active: useArchivyStore((s)=>s.active),
       maxFailures: useArchivyStore((s)=>s.maxFailures),
-      maxLoginAttempts: useArchivyStore((s)=>s.maxLoginAttempts),
       LoginCooldownMinutes: useArchivyStore((s)=>s.maxLoginAttempts),
       alarmLengthSeconds : useArchivyStore((s)=>s.alarmLengthSeconds),
       corruptionTimeLimitSeconds:  useArchivyStore((s)=>s.corruptionTimeLimitSeconds),
       startDate: toLocalISOString(useArchivyStore((s)=>s.startDate)),
       endDate: toLocalISOString(useArchivyStore((s)=>s.endDate)),
-      traitres: useArchivyStore((s)=>s.traitres).map((traitre: Traitre) => ({
+      traitres: traitres.map((traitre) => ({
         ...traitre,
-        trahisonTime: traitre.trahisonTime ? toLocalISOString(traitre.trahisonTime) : undefined
+        trahisonTime: toLocalISOString(traitre.trahisonTime)
       }))
     }
   })
+
+  // sync RHF state with zustand
+  useEffect(()=>{
+    setValue("traitres", traitres.map((t)=>({...t, trahisonTime: toLocalISOString(t.trahisonTime) })))
+  }, [traitres, setValue])
 
   const { fields, append, remove } = useFieldArray({
     name: 'traitres',
@@ -46,15 +50,16 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
   })
 
   const onSubmit = (data, evt) => {
+    // TODO stuff gets overwritten here
     evt?.preventDefault()
     setWholeState({
       ...data,
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
-      traitres: data.traitres.map((traitre: Traitre) => ({
+      now: new Date,
+      traitres: data.traitres.map((traitre) => ({
         ...traitre,
         trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined,
-      now: new Date
       }))
     })
   }
@@ -79,10 +84,6 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
               <Form.Group controlId='maxFailures'>
                 <Form.Label>Nombre de vies</Form.Label>
                 <Form.Control type='number'  {...register("maxFailures")} size='sm' />
-              </Form.Group>
-              <Form.Group controlId='maxLoginAttemps'>
-                <Form.Label>Max. essais login</Form.Label>
-                <Form.Control type='number'  {...register("maxLoginAttempts")} size='sm' />
               </Form.Group>
               <Form.Group controlId='maxLoginCooldown'>
                 <Form.Label>Cooldown entre corruptions (m)</Form.Label>
@@ -133,7 +134,7 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
                         </InputGroup>
                         <InputGroup className='traitre-bot' size='sm'>
                           <InputGroup.Text>trahison: </InputGroup.Text>
-                          <Form.Control type='datetime-local' step='1' {...register(`traitres.${index}.trahisonTime` as const, { valueAsDate: false })} />
+                          <Form.Control type='datetime-local' defaultValue={traitre.trahisonTime} step='1' {...register(`traitres.${index}.trahisonTime`)} />
                         </InputGroup>
                       </div>
                       <Button onClick={() => remove(index)} variant='outline-primary' className='btn-no-border'>

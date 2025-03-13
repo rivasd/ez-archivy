@@ -54,7 +54,18 @@ html.alarm {
     --bs-body-color:var(--color-empire-blue);
     --bs-tertiary-bg: #ffffff00;
     --light-gray-text-shadow:#bbab90;
-    --bs-input-focus-border-color:var(--color-empire-blue)
+    --bs-input-focus-border-color:var(--color-empire-blue);
+
+}
+
+.toast {
+    --bs-toast-bg: var(--main-bg);
+    --bs-toast-header-bg: var(--main-bg);
+    --bs-toast-header-color: rgba(194, 39, 19, 0.815);
+    --bs-toast-color: rgba(194, 39, 19, 0.815);
+    text-shadow: rgba(194, 39, 19, 0.815) 0px 0px 10px;
+    --bs-toast-border-color: rgba(194, 39, 19, 0.815);
+    --bs-toast-header-border-color: rgba(165, 88, 78, 0.815);
 }
 
 
