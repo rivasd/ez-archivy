@@ -41,9 +41,13 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
   const checkAccess = (evt: FormEvent) => {
     evt.stopPropagation();
     evt.preventDefault();
+    /*@ts-expect-error ts-ignore*/
     const uname = evt.currentTarget.elements['archive-username'].value
+    /*@ts-expect-error ts-ignore*/
     const pass = evt.currentTarget.elements['archive-mdp'].value
+    /*@ts-expect-error ts-ignore*/
     evt.currentTarget.elements['archive-username'].value = ''
+    /*@ts-expect-error ts-ignore*/
     evt.currentTarget.elements['archive-mdp'].value = ''
     const hit = traitres.find((traitre) => traitre.username == uname && traitre.password == pass)
 

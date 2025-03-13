@@ -12,11 +12,13 @@ export const initialState: ArchivyState = {
   traitres: [
     {
       username: 'Akela',
-      password: 'letsfuckinggo'
+      password: 'letsfuckinggo',
+      trahisonTime: undefined
     },
     {
       username: 'test',
-      password: 'test'
+      password: 'test',
+      trahisonTime: undefined
     }
   ],
   alarmLengthSeconds: 60,
@@ -29,6 +31,7 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
   persist(
     (set) => ({
       ...initialState,
+      //@ts-expect-error ts-ignore
       setWholeState: (newState: Partial<ArchivyState>) => set((oldState) => ({ ...oldState, ...newState, traitres: [...newState.traitres] })),
       setTrahison: (username: string) => set((state) => {
         const newTraitres = state.traitres.map((traitre) => (

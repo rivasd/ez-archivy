@@ -64,7 +64,7 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
       ...data,
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
-      lastCorruptionAttempt: new Date(data.lastCorruptionAttempt),
+      lastCorruptionAttempt: data.lastCorruptionAttempt ? new Date(data.lastCorruptionAttempt) : undefined,
       traitres: data.traitres.map((traitre) => ({
         ...traitre,
         trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined,
@@ -160,7 +160,7 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
                     </fieldset>
                   ))
                 }
-                <Button onClick={() => append({ username: 'nouveau', password: 'nouveau' })} variant='outline-primary'>+</Button>
+                <Button onClick={() => append({ username: 'nouveau', password: 'nouveau', trahisonTime:undefined })} variant='outline-primary'>+</Button>
               </>
             </Col>
           </Row>

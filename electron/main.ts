@@ -1,11 +1,8 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron'
-import { createRequire } from 'node:module'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import { handleConfigRead } from './store'
 import path from 'node:path'
 
-//@ts-expect-error require syntax
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
