@@ -11,9 +11,13 @@
 }
 
 .input-group-text {
-  min-width: 100px;
+  min-width: 95px;
+  padding: 0.15rem 0.25rem !important;
 }
 
 .btn-no-border {
   border: 0px;
+  max-width: 50px;
+  padding: 0.15rem 0.25rem !important;
+  max-height: 50px;
 }

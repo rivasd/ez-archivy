@@ -17,7 +17,6 @@ export interface ArchivyState {
   endDate: Date
   startDate: Date
   maxFailures: number
-  maxLoginAttempts: number
   LoginCooldownMinutes: number
   alarmLengthSeconds: number
   corruptionTimeLimitSeconds: number

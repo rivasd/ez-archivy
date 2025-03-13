@@ -9,6 +9,9 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { initialState } from './state/store'
 import alarmSound from './assets/battle-alarm.mp3'
 import Compteur from './components/Compteur/Compteur'
+import republic_logo from './assets/Galactic_Republic.svg'
+import SVG from 'react-inlinesvg';
+import RepublicLogo from './components/RepublicLogo/RepublicLogo'
 
 const alarmPeriod = 590
 
@@ -17,11 +20,12 @@ function App() {
   const setwholeState = useArchivyStore((state) => state.setWholeState)
   const setTrahison = useArchivyStore((state) => state.setTrahison)
   const stepTime = useArchivyStore((state)=> state.timeStep)
+  const attempt = useArchivyStore((state) => state.attemptCorruption)
   const timeLimit = useArchivyStore((state)=>state.corruptionTimeLimitSeconds)
   const alarmDuration = useArchivyStore((state) => state.alarmLengthSeconds)
   const [config, setConfig] = useState(false)
+  const [logoColor, setLogoColor] = useState('rgb(76, 164, 247)')
   const [countdownEnd, setCountdownEnd] = useState<Date | undefined>()
-  const [alarmEnd, setAlarmEnd] = useState<Date | undefined>()
   const [oups, setOups] = useState('')
   const alarmAudio = useRef(new Audio(alarmSound))
   const alarmInterval = useRef<ReturnType<typeof setInterval>>()
@@ -35,8 +39,10 @@ function App() {
     return () => {
       if (phase) {
         document.documentElement.classList.add('alarm')
+        setLogoColor('#f32618')
       } else {
         document.documentElement.classList.remove('alarm')
+        setLogoColor('rgb(76, 164, 247)')
       }
       phase = !phase
     }
@@ -75,7 +81,8 @@ function App() {
     alarmAudio.current.currentTime = 0
     clearInterval(alarmInterval.current)
     document.documentElement.classList.remove('alarm')
-    setAlarmEnd(undefined)
+    setLogoColor('rgb(76, 164, 247)')
+    
   }
 
   const onAuth = (uname: string) => {
@@ -85,6 +92,7 @@ function App() {
   }
 
   const onGreatSuccess = (uname: string) => {
+    attempt()
     setTrahison(uname)
   }
 
@@ -124,8 +132,10 @@ function App() {
         </Container>
       </header>
       <main id='main' className='flex-grow-1 pt-3'>
-        <Row className='me-0'>
-          <Col id='left-pad'></Col>
+        <Row className='me-0 h-50'>
+          <Col id='left-pad' className='align-items-center justify-content-center d-flex'>
+            <RepublicLogo width={200} height={200} color={logoColor}/>
+          </Col>
           <Col xs={6}>
             <Container>
               <Status></Status>
@@ -133,7 +143,9 @@ function App() {
               {countdownEnd && <Compteur end={countdownEnd} onCompteurEnd={alarm}/>}
             </Container>
           </Col>
-          <Col id='right-pad'></Col>
+          <Col id='right-pad' className='align-items-center justify-content-center d-flex'>
+            <RepublicLogo width={200} height={200} color={logoColor}/>
+          </Col>
         </Row>
 
         <ConfigPanel
@@ -144,11 +156,11 @@ function App() {
       </main>
       <footer>
       {
-            oups && //TODO: style this toast
+        oups &&
             <Toast onClose={() => setOups('')} show={
               Boolean(oups)
               } 
-              delay={3000}
+              delay={6000}
               autohide
               className='fixed-bottom mx-auto'
               >

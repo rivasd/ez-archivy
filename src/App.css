@@ -20,7 +20,7 @@
 
 #main-title {
   font-weight: 500;
-  font-size: 24px;
+  font-size: 32px;
 }
 
 #tagline {
@@ -33,4 +33,20 @@
 
 button {
   margin: 6px;
+}
+
+svg.logo {
+
+  path {
+    fill:aqua;
+    stroke: aqua;
+  }
+
+  circle {
+    
+    stroke: aqua;
+  }
+  circle::nth-child(1){
+    fill:none;
+  }
 }

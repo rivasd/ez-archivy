@@ -2,10 +2,10 @@ import { create } from 'zustand'
 import { parseISO } from 'date-fns'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { ArchivyState, ArchivyActions } from './models'
+import { toLocalISOString } from '../utils/utils'
 
 export const initialState: ArchivyState = {
   LoginCooldownMinutes: 60,
-  maxLoginAttempts: 3,
   startDate: new Date(new Date().getTime() - (1 * 60 * 60 * 1000)),
   endDate: new Date(new Date().getTime() + (1 * 60 * 60 * 1000)),
   maxFailures: 4,
@@ -19,8 +19,8 @@ export const initialState: ArchivyState = {
       password: 'test'
     }
   ],
-  alarmLengthSeconds: 120,
-  corruptionTimeLimitSeconds: 30,
+  alarmLengthSeconds: 60,
+  corruptionTimeLimitSeconds: 45,
   active: false,
   now: new Date()
 }
@@ -46,7 +46,7 @@ export const useArchivyStore = create<ArchivyState & ArchivyActions>()(
         replacer: function (key) {
           const v = this[key];  // pure dinguerie car il y a un bogue dans zustand: https://github.com/pmndrs/zustand/discussions/2403
           if (v instanceof Date) {
-            return { __type: 'Date', value: v.toISOString() };
+            return { __type: 'Date', value: toLocalISOString(v) };
           }
           return v;
         },

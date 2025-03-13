@@ -97,7 +97,7 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
         <div>
           {onCooldown &&
             <div>
-              Corruption récente, patientez
+              Corruption éffectuée depuis moins de {loginCooldown} minutes, revenez plus tard
             </div>
           }
           

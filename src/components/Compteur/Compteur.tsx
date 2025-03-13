@@ -17,9 +17,16 @@ const Compteur = ({end, onCompteurEnd}: CompteurProps) => {
   },[now, end, onCompteurEnd])
 
   return (
-    <>{now < end ? <div>
-      Alarme dans {Math.floor((end.getTime() - now.getTime()) / 1000) } secondes
-    </div>: null}</>
+    <>
+    {
+      now < end ? 
+      <div className="w-25 mx-auto mt-3">
+        Pour votre sécurité, complétez le processus avant {Math.floor((end.getTime() - now.getTime()) / 1000) } secondes.
+      </div>
+      : 
+      null
+    }
+    </>
   )
 }
 

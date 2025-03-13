@@ -118,3 +118,8 @@ html.alarm {
     background-color: var(--color-empire-blue);
     border-color: var(--color-empire-blue);
 }
+
+.form-label {
+    margin-bottom: 0.1rem;
+    font-size: 14px;
+}
