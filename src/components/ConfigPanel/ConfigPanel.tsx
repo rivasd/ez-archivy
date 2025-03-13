@@ -23,11 +23,12 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
     handleSubmit,
     control,
     setValue,
+    getValues,
   } = useForm({
     defaultValues: {
       active: useArchivyStore((s)=>s.active),
       maxFailures: useArchivyStore((s)=>s.maxFailures),
-      LoginCooldownMinutes: useArchivyStore((s)=>s.maxLoginAttempts),
+      LoginCooldownMinutes: useArchivyStore((s)=>s.LoginCooldownMinutes),
       alarmLengthSeconds : useArchivyStore((s)=>s.alarmLengthSeconds),
       corruptionTimeLimitSeconds:  useArchivyStore((s)=>s.corruptionTimeLimitSeconds),
       startDate: toLocalISOString(useArchivyStore((s)=>s.startDate)),
@@ -40,20 +41,21 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
     }
   })
 
-  // sync RHF state with zustand
-  useEffect(()=>{
-    setValue("traitres", traitres.map((t)=>({...t, trahisonTime: toLocalISOString(t.trahisonTime) })))
-    setValue("lastCorruptionAttempt", toLocalISOString(lastCorrAttempt))
-  }, [traitres, setValue, lastCorrAttempt])
+  
 
   useEffect(()=>{
     setValue("lastCorruptionAttempt", toLocalISOString(lastCorrAttempt))
   }, [setValue, lastCorrAttempt])
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     name: 'traitres',
     control: control
   })
+
+  // sync RHF state with zustand
+  useEffect(()=>{
+    replace(traitres.map((t)=>({...t, trahisonTime: toLocalISOString(t.trahisonTime) })))
+  }, [traitres, replace])
 
   const onSubmit = (data, evt) => {
     // TODO stuff gets overwritten here
@@ -149,7 +151,7 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
                         </InputGroup>
                         <InputGroup className='traitre-bot' size='sm'>
                           <InputGroup.Text>trahison: </InputGroup.Text>
-                          <Form.Control type='datetime-local' step='1' {...register(`traitres.${index}.trahisonTime`)} />
+                          <Form.Control type='datetime-local' step='1' defaultValue={getValues(`traitres.${index}.trahisonTime`)} {...register(`traitres.${index}.trahisonTime`)} />
                         </InputGroup>
                       </div>
                       <Button onClick={() => remove(index)} variant='outline-primary' className='btn-no-border'>

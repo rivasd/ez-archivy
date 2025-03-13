@@ -1,7 +1,7 @@
-import { Button, Container, Form, Toast } from 'react-bootstrap'
+import { Button, Container, Form } from 'react-bootstrap'
 import './Login.css'
 import useArchivyStore, { useLastCorruptionTime } from '../../state/store'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useCallback, useState } from 'react'
 import Dingueries from '../Dingueries/Dingueries'
 
 interface LoginProps {
@@ -31,6 +31,12 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
     attempt()
     startCountdown()
   }
+
+  const onSuccess = useCallback((name: string)=>{
+    setTraitreName('')
+    setLoginStep(undefined)
+    onAccess(name)
+  }, [onAccess])
 
   const checkAccess = (evt: FormEvent) => {
     evt.stopPropagation();
@@ -86,11 +92,11 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
           </Button>
           {
             // Démarrer les dingueries après le login initial
-            loginStep !== undefined && traitreName ? <Dingueries {...{
+            ((loginStep !== undefined) && traitreName !== '') ? <Dingueries {...{
               pos: loginStep,
               onAlarm: onAlarm,
-              onSuccess: onAccess,
-              traitreName: traitreName
+              onSuccess: onSuccess,
+              traitreName: traitreName,
             }} /> : null
           }
         </div>

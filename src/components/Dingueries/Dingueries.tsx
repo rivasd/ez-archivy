@@ -19,14 +19,14 @@ const Dingueries = (props: DingueriesProps) => {
   const [shouldShow, setShouldShow] = useState(true)
 
   const succeed = (name) => {
-    setShouldShow(false)
     props.onSuccess(name)
+    setShouldShow(false)
   }
 
   return (
     <Modal show={shouldShow} onHide={() => {
-      setShouldShow(false)
       props.onAlarm()
+      setShouldShow(false)
     }}
     keyboard={false} backdrop="static" className="dingueries">
       <Modal.Header closeButton closeVariant='white'>
