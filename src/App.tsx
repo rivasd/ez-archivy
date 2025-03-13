@@ -68,6 +68,7 @@ function App() {
   }
 
   const stopAlarm = () => {
+    stopCountdown()
     alarmAudio.current.pause()
     alarmAudio.current.currentTime = 0
     clearInterval(alarmInterval.current)
