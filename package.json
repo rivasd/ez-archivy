@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "icon": "./src/assets/Galactic_Republic.svg",
   "author": "Daniel Rivas",
   "description": "Un système de trollage de jeunes FACILE à utiliser",
   "scripts": {

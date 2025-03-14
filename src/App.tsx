@@ -63,7 +63,7 @@ function App() {
     alarmAudio.current.loop = true
     alarmAudio.current.play()
     const switchingFn = swithcFn()
-
+    clearInterval(alarmInterval.current)
     switchingFn()
     alarmInterval.current = setInterval(() => {
       if (new Date() < endTime) {

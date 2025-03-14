@@ -60,15 +60,17 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
   const onSubmit = (data, evt) => {
     // TODO stuff gets overwritten here
     evt?.preventDefault()
+    const newTraitres = data.traitres.map((traitre) => ({
+      ...traitre,
+      trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined,
+    }))
+    replace(newTraitres)
     setWholeState({
       ...data,
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
       lastCorruptionAttempt: data.lastCorruptionAttempt ? new Date(data.lastCorruptionAttempt) : undefined,
-      traitres: data.traitres.map((traitre) => ({
-        ...traitre,
-        trahisonTime: traitre.trahisonTime ? new Date(traitre.trahisonTime) : undefined,
-      }))
+      traitres: newTraitres
     })
   }
 
@@ -151,7 +153,7 @@ const ConfigPanel = ({ show, onHide }: ConfigProps) => {
                         </InputGroup>
                         <InputGroup className='traitre-bot' size='sm'>
                           <InputGroup.Text>trahison: </InputGroup.Text>
-                          <Form.Control type='datetime-local' step='1' defaultValue={getValues(`traitres.${index}.trahisonTime`)} {...register(`traitres.${index}.trahisonTime`)} />
+                          <Form.Control type='datetime-local' step='1' {...register(`traitres.${index}.trahisonTime` as const)} />
                         </InputGroup>
                       </div>
                       <Button onClick={() => remove(index)} variant='outline-primary' className='btn-no-border'>

@@ -10,6 +10,7 @@ export interface DingueriesProps {
   pos: number;
   traitreName: string;
   onSuccess: (traitre: string) => void;
+  onFail: ()=>void
   onAlarm: () => void
 }
 
@@ -20,13 +21,14 @@ const Dingueries = (props: DingueriesProps) => {
 
   const succeed = (name) => {
     props.onSuccess(name)
-    setShouldShow(false)
+    setShouldShow(true)
   }
+
 
   return (
     <Modal show={shouldShow} onHide={() => {
-      props.onAlarm()
-      setShouldShow(false)
+      setShouldShow(true)
+      props.onFail()
     }}
     keyboard={false} backdrop="static" className="dingueries">
       <Modal.Header closeButton closeVariant='white'>

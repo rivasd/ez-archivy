@@ -5,7 +5,7 @@ import { ArchivyState, ArchivyActions } from './models'
 import { toLocalISOString } from '../utils/utils'
 
 export const initialState: ArchivyState = {
-  LoginCooldownMinutes: 60,
+  LoginCooldownMinutes: 5,
   startDate: new Date(new Date().getTime() - (1 * 60 * 60 * 1000)),
   endDate: new Date(new Date().getTime() + (1 * 60 * 60 * 1000)),
   maxFailures: 4,

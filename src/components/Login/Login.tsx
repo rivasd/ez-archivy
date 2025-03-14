@@ -24,6 +24,7 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
 
   const [traitreName, setTraitreName] = useState('')
   const [loginStep, setLoginStep] = useState<undefined | number>()
+  const [shouldShow, setShouldShow] = useState((loginStep !== undefined) && traitreName !== '')
 
   const onCooldown = lastCompletedCorruption ? now < new Date(lastCompletedCorruption.getTime() + loginCooldown * 60000) : false
 
@@ -35,8 +36,16 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
   const onSuccess = useCallback((name: string)=>{
     setTraitreName('')
     setLoginStep(undefined)
+    setShouldShow(false)
     onAccess(name)
   }, [onAccess])
+
+  const onFail = useCallback(()=>{
+    setShouldShow(false)
+    setTraitreName('')
+    setLoginStep(undefined)
+    onAlarm()
+  }, [onAlarm])
 
   const checkAccess = (evt: FormEvent) => {
     evt.stopPropagation();
@@ -60,6 +69,7 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
       else {
         setLoginStep(0)
         setTraitreName(uname)
+        setShouldShow(true)
       }
     } else {
       setOups('Erreur de login')
@@ -96,12 +106,13 @@ const Login = ({ onAlarm, onAccess, startCountdown, stopCountdown, setOups }: Lo
           </Button>
           {
             // Démarrer les dingueries après le login initial
-            ((loginStep !== undefined) && traitreName !== '') ? <Dingueries {...{
+             shouldShow && loginStep!==undefined && <Dingueries {...{
               pos: loginStep,
               onAlarm: onAlarm,
               onSuccess: onSuccess,
-              traitreName: traitreName,
-            }} /> : null
+              onFail: onFail,
+              traitreName: traitreName
+            }} />
           }
         </div>
         <div>

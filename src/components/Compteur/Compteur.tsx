@@ -20,7 +20,7 @@ const Compteur = ({end, onCompteurEnd}: CompteurProps) => {
     <>
     {
       now < end ? 
-      <div className="w-25 mx-auto mt-3">
+      <div className="w-50 mx-auto mt-3">
         Pour votre sécurité, complétez le processus avant {Math.floor((end.getTime() - now.getTime()) / 1000) } secondes.
       </div>
       : 
